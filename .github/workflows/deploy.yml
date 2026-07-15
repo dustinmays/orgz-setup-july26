@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image (the artifact promoted below)
+        run: docker build -t orgz-hello:${{ github.sha }} .
+
+  deploy-staging:
+    name: deploy-staging
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Mock deploy to staging
+        run: echo "Deploying orgz-hello:${{ github.sha }} to STAGING (mock — no real infra)"
+
+  deploy-production:
+    name: deploy-production
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Mock deploy to production
+        run: echo "Deploying orgz-hello:${{ github.sha }} to PRODUCTION (mock — no real infra)"
